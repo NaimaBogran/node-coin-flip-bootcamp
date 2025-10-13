@@ -18,15 +18,43 @@ const server = http.createServer(function(req, res) {
     });
   }
   else if (page == '/api') {
-   function coinFlip(){
-    Math.random() * (2 - 1) + 1
-   }
-   const heads = 1;
-   const tails = 2;
-    if(document.getElementById('#heads').clicked == true){ //got this line from stackoverflow
-        coinFlip
-        console.log(coinFlip)
+    //coin flip logic
+    const serverFlip = Math.floor(Math.random() * 2) + 1
+    
+    //lets 1 = heads and 2 = tails
+    let flipResult
+    if (serverFlip === 1){
+        flipResult = 'Heads'
+    } else {
+        flipResult = 'Tails'
     }
+    //gets users guess
+    const userGuess = parseInt(params.guess)
+    let userChoice;
+
+    if (userGuess === 1) {
+        userChoice = 'Heads'
+    } else {
+        userChoice = 'Tails'
+    }
+
+    let outcome
+    if(serverFlip === userGuess){
+        outcome = 'Winner!'
+    } else {
+        outcome = 'You lost:('
+    }
+
+    res.writeHead(200, { 'Content-type': 'application/json'})
+    const responseObj = {
+        userGuessNum: userGuess,
+        userGuess: userChoice,
+        serverFlipNum: serverFlip,
+        serverFlip: flipResult,
+        outcome: outcome
+
+    }
+    res.end(JSON.stringify(responseObj))
   }
 
     // if('student' in params){
@@ -52,6 +80,7 @@ const server = http.createServer(function(req, res) {
   
   else if (page == '/css/style.css'){
     fs.readFile('css/style.css', function(err, data) {
+      res.writeHead(200, {'Content-Type': 'text/css'}) //there was no writehead for the css so i added one?
       res.write(data);
       res.end();
     });
